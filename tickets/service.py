@@ -88,3 +88,24 @@ def advance_status(store: InMemoryStore, role: str, ticket_id: int,
     if new_status == "Resolved":
         ticket.resolution = resolution
     return ticket
+
+
+def get_ticket_details(store: InMemoryStore, user: str, role: str,
+                       ticket_id) -> Ticket:
+    """FR5 (V1.1): view the full details of one ticket.
+
+    BR5: employees may only open their own tickets; IT may open any ticket.
+    A ticket owned by someone else gives the SAME error as a missing ticket,
+    so employees cannot discover which ticket IDs exist (no data leakage).
+    """
+    _require_role(role, ROLES)
+    # ticket_id is caller-controlled input: accept positive whole numbers only.
+    if isinstance(ticket_id, bool) or not isinstance(ticket_id, int) or ticket_id < 1:
+        raise TicketError("Ticket ID must be a positive whole number.")
+
+    ticket = store.get(ticket_id)
+    if ticket is None:
+        raise TicketError(f"Ticket #{ticket_id} not found.")
+    if role == "employee" and ticket.created_by != _require_user(user):
+        raise TicketError(f"Ticket #{ticket_id} not found.")  # BR5
+    return ticket
