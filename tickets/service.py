@@ -3,6 +3,7 @@
 The UI (app.py) only calls these functions, so every rule can be tested
 directly with pytest without starting Streamlit.
 """
+from copy import deepcopy
 from typing import Iterable, List
 
 from .models import CATEGORIES, Ticket
@@ -97,6 +98,9 @@ def get_ticket_details(store: InMemoryStore, user: str, role: str,
     BR5: employees may only open their own tickets; IT may open any ticket.
     A ticket owned by someone else gives the SAME error as a missing ticket,
     so employees cannot discover which ticket IDs exist (no data leakage).
+
+    Returns a COPY, not the stored object, so callers cannot change a ticket
+    without going through create_ticket/advance_status (review finding RF-1).
     """
     _require_role(role, ROLES)
     # ticket_id is caller-controlled input: accept positive whole numbers only.
@@ -108,4 +112,4 @@ def get_ticket_details(store: InMemoryStore, user: str, role: str,
         raise TicketError(f"Ticket #{ticket_id} not found.")
     if role == "employee" and ticket.created_by != _require_user(user):
         raise TicketError(f"Ticket #{ticket_id} not found.")  # BR5
-    return ticket
+    return deepcopy(ticket)  # RF-1: read-only view of stored data

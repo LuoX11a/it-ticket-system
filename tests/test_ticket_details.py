@@ -26,13 +26,15 @@ def test_employee_cannot_open_other_users_ticket(store):  # BR5 (security)
 
 
 def test_other_users_ticket_and_missing_ticket_give_same_error(store):  # BR5 no leakage
+    # RF-2: compare the exact message, not just "not found" being somewhere in it.
+    # The message contains the requested ID, so both must match the SAME template.
     t = make(store, user="alice")
     with pytest.raises(TicketError) as other:
         get_ticket_details(store, "bob", "employee", t.id)
     with pytest.raises(TicketError) as missing:
         get_ticket_details(store, "bob", "employee", 999)
-    assert "not found" in str(other.value)
-    assert "not found" in str(missing.value)
+    assert str(other.value) == f"Ticket #{t.id} not found."
+    assert str(missing.value) == "Ticket #999 not found."
 
 
 def test_it_can_open_any_ticket(store):  # BR5
@@ -49,11 +51,16 @@ def test_full_resolution_text_is_returned(store):  # FR5 - defect found in valid
     assert d.resolution == long_note.strip()
 
 
-@pytest.mark.parametrize("bad_id", [0, -1, "1", 1.5, None, True])
-def test_invalid_ticket_id_rejected(store, bad_id):  # caller-controlled input
+@pytest.mark.parametrize("bad_id", [0, -1, "1", 1.5, None, True, False, []])
+def test_invalid_ticket_id_rejected(store, bad_id):  # caller-controlled input (RF-4)
     make(store)
     with pytest.raises(TicketError):
         get_ticket_details(store, "alice", "employee", bad_id)
+
+
+def test_very_large_missing_id_returns_not_found(store):  # RF-4 extreme value
+    with pytest.raises(TicketError, match="not found"):
+        get_ticket_details(store, "alice", "employee", 10**100)
 
 
 @pytest.mark.parametrize("role", ["admin", "", None])
@@ -67,3 +74,20 @@ def test_viewing_does_not_change_ticket(store):  # read-only operation
     t = make(store)
     get_ticket_details(store, "alice", "employee", t.id)
     assert t.status == "New" and t.resolution == ""
+
+
+def test_changing_returned_details_does_not_change_stored_ticket(store):
+    # RF-1/RF-3: details must be a copy, so BR1/BR2/BR4 cannot be bypassed.
+    t = make(store)
+    d = get_ticket_details(store, "alice", "employee", t.id)
+    d.status = "Resolved"
+    d.title = "x"
+    d.description = "A" * 5000
+    d.created_by = "bob"
+    d.resolution = "hacked"
+    stored = get_ticket_details(store, "alice", "employee", t.id)
+    assert stored.status == "New"
+    assert stored.title == "Laptop will not start"
+    assert stored.description == "Details here"
+    assert stored.created_by == "alice"
+    assert stored.resolution == ""
