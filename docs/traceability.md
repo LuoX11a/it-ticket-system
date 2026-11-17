@@ -19,5 +19,7 @@ All tests are in `tests/test_service.py`. Expected results are taken from
 | BR4 | `test_description_too_long_rejected` | Boundary | Bad data |
 | FR4 | `test_resolve_without_note_rejected` | Expected failure | Incomplete records |
 | QR1 | `test_ticket_not_found`, `test_empty_username_rejected` | Failure handling | App crash |
+| BR1/BR2/BR4 protection (RF-1) | `test_changing_returned_details_does_not_change_stored_ticket` | Encapsulation / regression | Rule bypass |
+| Caller input (RF-4) | `test_very_large_missing_id_returns_not_found` | Extreme value | Crash / wrong error |
 
 **Verification check:** every FR, BR and QR above has at least one test (QR2 satisfied).

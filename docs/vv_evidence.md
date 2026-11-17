@@ -4,7 +4,7 @@
 | Activity | Method | Result |
 |---|---|---|
 | Requirements–test traceability review | Checked every FR/BR/QR in requirements.md maps to ≥1 test (docs/traceability.md) | All covered (V1.0 and V1.1) |
-| Automated testing in CI | pytest runs on every push/PR via GitHub Actions | V1.0: 23/23 passed. V1.1: 38/38 passed (23 regression + 15 new) |
+| Automated testing in CI | pytest runs on every push/PR via GitHub Actions | V1.0: 23/23 passed. V1.1: 42/42 passed (23 regression + 15 new) |
 
 ## Validation (are we building the right product?)
 **Date:** 17/11/2026  **Participant:** Student peer A (used a mobile phone)

@@ -23,6 +23,7 @@ Files: `tickets/service.py` (new `get_ticket_details`), `app.py`,
 | Another user's ticket should give the same error as a missing ticket | Agreed – prevents employees guessing which IDs exist | Accepted |
 | Ticket ID must be a positive int; `True` rejected even though Python treats it as 1 | Checked in Python: `isinstance(True, int)` is True, so the extra check is needed | Accepted |
 | Removing the Resolution column from the table is OK because the detail view shows it | Agreed – matches feedback; table stays readable on a phone | Accepted |
+| Returning the stored Ticket object is safe because the UI only reads it | Reviewer showed callers can mutate it and bypass BR1/BR2/BR4; I reproduced it | **Rejected** – now returns a copy (RF-1) |
 
 ## 4. Human verification
 - Read the full diff line by line (`git diff main`).
