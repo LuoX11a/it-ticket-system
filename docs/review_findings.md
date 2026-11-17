@@ -24,7 +24,7 @@ session. Full output saved as evidence: *Review Ticket Detail Pull Request.pdf*
 ## Out of scope (recorded, not fixed in this PR)
 - `list_tickets()` (V1.0) also returns live stored objects – the same pattern as RF-1.
   It was **not introduced by this PR**, and changing it would widen the patch.
-  Risk is the same (no UI exploit path). Raised as a follow-up issue: **(add issue number)**.
+  Risk is the same (no UI exploit path). Raised as a follow-up issue: **#4**.
 
 ## Merge decision
 **Decision: Ready to merge.**
