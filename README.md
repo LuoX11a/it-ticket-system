@@ -4,7 +4,7 @@ A small Streamlit app where **employees** submit IT support tickets and **IT Sup
 process them through a controlled workflow (`New → In Progress → Resolved`).
 Built for CP5401 Assessment 3 to demonstrate software quality engineering.
 
-- **Live app:** _add Streamlit URL here_
+- **Live app:** https://luox11a-it-ticket.streamlit.app/
 - **Releases:** _add V1.0 / V1.1 links here_
 - **Requirements:** [requirements.md](requirements.md)
 - **Traceability:** [docs/traceability.md](docs/traceability.md)
